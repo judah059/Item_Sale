@@ -1,8 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="item">
-  {% for obj in object_list %}
-  <div>obj.name</div>
-  {% endfor %}
+<h1>
+    Items
+</h1>
+<div class="products">
+    <div class="products-item">
+        <div class="product-fields">
+            <div class="product-field">
+                {% for obj in object_list %}
+                <div class="product-field-name">{{obj.name}}</div>
+                <hr/>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

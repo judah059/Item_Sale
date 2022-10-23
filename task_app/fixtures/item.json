@@ -1,0 +1,1 @@
+[{"model": "task_app.item", "pk": 1, "fields": {"name": "banana", "description": "tasty", "count": 5, "price": "100.00"}}, {"model": "task_app.item", "pk": 2, "fields": {"name": "celery", "description": "not tasty", "count": 5, "price": "200.00"}}]
