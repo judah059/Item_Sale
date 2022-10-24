@@ -1,4 +1,5 @@
 from annoying.decorators import render_to
+from django.contrib.auth.views import LoginView, LogoutView
 from django.db import transaction
 from django.views.generic import ListView, FormView, DetailView
 from task_app.models import Item, Employee
@@ -51,3 +52,11 @@ class ItemDetailView(DetailView):
         kw['request'] = self.request
         return kw
 
+
+class Login(LoginView):
+    template_name = 'login.html'
+
+
+class Logout(LogoutView):
+    next_page = '/'
+    login_url = '/login/'
