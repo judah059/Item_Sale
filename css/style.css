@@ -128,3 +128,7 @@ textarea{
 .menu-item:not(:last-child){
     margin-right: 15px;
 }
+
+footer {
+    margin: 20px;
+}
