@@ -17,6 +17,9 @@ class Employee(models.Model):
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
+    def fullname(self):
+        return f'{self.first_name} {self.last_name}'
+
 
 class Item(models.Model):
     name = models.CharField(
@@ -45,4 +48,10 @@ class Sale(models.Model):
     )
     item_count = models.IntegerField()
     created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def total_price(self):
+        return self.item.price * self.item_count
 
