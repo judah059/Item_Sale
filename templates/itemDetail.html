@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="products">
+    <div class="product-item">
+        <div class="product-field">
+            <div class="product-field-name">{{ object.name }}</div>
+            <div > {{object.count}} </div>
+            <div class="product-field-description">{{object.description}}</div>
+            <form method="post" action="{% url 'buy-item' %}">
+                {% csrf_token %}
+                {{ form }}
+                <input type="hidden" name="item" value="{{ object.id }}">
+                <select name="employee">
+                    {% for employee in employees %}
+                    <option value="{{employee.id}}"> {{ employee }}</option>
+                    {% endfor %}}
+                </select>
+                <input type="submit" value="Pay">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
