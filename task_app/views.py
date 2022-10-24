@@ -68,3 +68,4 @@ class SaleListView(LoginRequiredMixin, ListView):
     login_url = '/login/'
     model = Sale
     template_name = 'Sale.html'
+    paginate_by = 5
