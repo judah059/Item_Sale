@@ -2,7 +2,7 @@ from django.contrib.auth.models import AnonymousUser, User
 from django.test import TestCase, RequestFactory
 
 from task_app.views import ItemListView, SaleCreateView, SaleListView
-from task_app.models import Sale
+from task_app.models import Sale, Item, PriceHistory
 
 
 class FirstTest(TestCase):
@@ -40,3 +40,11 @@ class FirstTest(TestCase):
         request.user = self.user
         response = SaleListView.as_view()(request)
         self.assertEqual(response.status_code, 200)
+
+    def test_price(self):
+        item = Item.objects.get(pk=1)
+        item.price = 500
+        item.save()
+        price_history = PriceHistory.objects.get(pk=12)
+        self.assertEqual(price_history.price, 500)
+

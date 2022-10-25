@@ -44,7 +44,7 @@ class Sale(models.Model):
     employee = models.ForeignKey(
         Employee,
         on_delete=models.CASCADE,
-        related_name='employees',
+        related_name='sales',
     )
     item_count = models.IntegerField()
     created_at = models.DateTimeField(auto_now=True)
@@ -55,3 +55,15 @@ class Sale(models.Model):
     def total_price(self):
         return self.item.price * self.item_count
 
+
+class PriceHistory(models.Model):
+    item = models.ForeignKey(
+        Item,
+        on_delete=models.CASCADE,
+        related_name='history',
+    )
+    price = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+    created_at = models.DateTimeField(auto_now=True)

@@ -3,25 +3,22 @@
 <div class="header">
     <div class="header-right">
         <ul class="menu">
-            {% if request.user.is_authenticated %}
             <li class="menu-item">
                 {{ user.get_username }}
             </li>
             <li class="menu-item">
                 <a href="{% url 'logout' %}">Logout</a>
             </li>
-            {% endif %}
-            {% if request.user.is_authenticated == False %}
             <li class="menu-item">
-                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'item-detail' item.id %}">Logout</a>
             </li>
-            {% endif %}
+
 
         </ul>
     </div>
 </div>
 <h1>
-    Items
+    History
 </h1>
 <div class="products">
     <div class="products-item">
@@ -29,15 +26,9 @@
             <div class="product-field">
                 {% for obj in object_list %}
                 <div class="product-field-name">
-                    {{obj.name}}
-                    <span>
-                <button class="product-field-description">
-                    <a href="{% url 'item-detail' obj.id %}"> Buy </a>
-                </button>
-                        <form method="get" action="{% url 'history' %}" class="history-button">
-                            <input type="hidden" name="pk" value="{{obj.id}}">
-                            <input type="submit" value="History">
-                        </form>
+                    {{obj.price}}
+                    <span class="product-field-name">
+                    {{obj.created_at}}
                     </span>
                 </div>
                 <hr/>

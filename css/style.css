@@ -132,3 +132,7 @@ textarea{
 footer {
     margin: 20px;
 }
+.history-button {
+    width: 30%;
+    text-align: right;
+}

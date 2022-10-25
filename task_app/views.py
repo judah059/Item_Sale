@@ -1,10 +1,8 @@
-from annoying.decorators import render_to
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.db import transaction
-from django.db.models import Sum
 from django.views.generic import ListView, FormView, DetailView
-from task_app.models import Item, Employee, Sale
+from task_app.models import Item, Employee, Sale, PriceHistory
 from task_app.forms import AddSaleForm
 
 
@@ -69,3 +67,21 @@ class SaleListView(LoginRequiredMixin, ListView):
     model = Sale
     template_name = 'Sale.html'
     paginate_by = 5
+
+
+class HistoryListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    model = PriceHistory
+    template_name = 'history.html'
+    paginate_by = 5
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        item_id = self.request.GET.get('pk')
+        return qs.filter(item__id=item_id)
+
+    def get_context_data(self, **kwargs):
+        context = super(HistoryListView, self).get_context_data(**kwargs)
+        item_id = self.request.GET.get('pk')
+        context['item'] = Item.objects.get(id=item_id)
+        return context
