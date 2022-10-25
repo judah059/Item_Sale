@@ -16,17 +16,9 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
-from task_app.views import ItemListView, ItemDetailView, SaleCreateView, Login, Logout, SaleListView, HistoryListView
-from config.settings import MEDIA_URL, MEDIA_ROOT
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', ItemListView.as_view(), name='items'),
-    path('detail/<int:pk>/', ItemDetailView.as_view(), name='item-detail'),
-    path('buy-item/', SaleCreateView.as_view(), name='buy-item'),
-    path('login/', Login.as_view(), name='login'),
-    path('logout/', Logout.as_view(), name='logout'),
-    path('sale/', SaleListView.as_view(), name='sale'),
-    path('item-history/', HistoryListView.as_view(), name='history'),
-] + static(MEDIA_URL, document_root=MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('', include('task_app.urls'))
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

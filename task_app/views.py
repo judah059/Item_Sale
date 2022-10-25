@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.db import transaction
 from django.views.generic import ListView, FormView, DetailView
-from task_app.models import Item, Employee, Sale, PriceHistory
+from task_app.models import Item, MyUser, Sale, PriceHistory
 from task_app.forms import AddSaleForm
 
 
@@ -24,10 +24,8 @@ class SaleCreateView(FormView):
     def form_valid(self, form):
         obj = form.save(commit=False)
         employee_id = self.request.POST.get('employee')
-        print(employee_id)
-        obj.employee = Employee.objects.get(id=employee_id)
+        obj.employee = MyUser.objects.get(id=employee_id)
         item_id = self.request.POST.get('item')
-        print(item_id)
         obj.item = Item.objects.get(id=item_id)
         obj.item.count = obj.item.count - obj.item_count
         with transaction.atomic():
@@ -44,7 +42,7 @@ class ItemDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ItemDetailView, self).get_context_data(**kwargs)
         context['form'] = AddSaleForm
-        context['employees'] = Employee.objects.all()
+        context['employees'] = MyUser.objects.filter(role='EM')
         return context
 
     def get_form_kwargs(self):
@@ -67,6 +65,10 @@ class SaleListView(LoginRequiredMixin, ListView):
     model = Sale
     template_name = 'Sale.html'
     paginate_by = 5
+
+    def get_queryset(self):
+        qs = super(SaleListView, self).get_queryset()
+        return qs.all().select_related('item', 'employee')
 
 
 class HistoryListView(LoginRequiredMixin, ListView):

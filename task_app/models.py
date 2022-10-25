@@ -1,24 +1,22 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class Employee(models.Model):
-    first_name = models.CharField(
-        max_length=100,
-    )
-    last_name = models.CharField(
-        max_length=100,
+class MyUser(AbstractUser):
+    USER_TYPE_CHOICES = [
+        ('RE', 'Regular'),
+        ('EM', 'Employee')
+    ]
+    role = models.CharField(
+        max_length=2,
+        choices=USER_TYPE_CHOICES,
+        default='RE',
     )
     city = models.CharField(
         max_length=120,
         null=True,
         blank=True,
     )
-
-    def __str__(self):
-        return f'{self.first_name} {self.last_name}'
-
-    def fullname(self):
-        return f'{self.first_name} {self.last_name}'
 
 
 class Item(models.Model):
@@ -34,6 +32,9 @@ class Item(models.Model):
         decimal_places=2,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Sale(models.Model):
     item = models.ForeignKey(
@@ -42,18 +43,29 @@ class Sale(models.Model):
         related_name='sales',
     )
     employee = models.ForeignKey(
-        Employee,
+        MyUser,
         on_delete=models.CASCADE,
         related_name='sales',
     )
     item_count = models.IntegerField()
+    total_price = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
     created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-created_at']
 
-    def total_price(self):
-        return self.item.price * self.item_count
+    def save(self, *args, **kwargs):
+        if not self.total_price:
+            self.total_price = self.item.price * self.item_count
+        super(Sale, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.item} by {self.employee}'
 
 
 class PriceHistory(models.Model):
@@ -67,3 +79,6 @@ class PriceHistory(models.Model):
         decimal_places=2,
     )
     created_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.item} history'

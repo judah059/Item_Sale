@@ -10,8 +10,7 @@
             <li class="menu-item">
                 <a href="{% url 'logout' %}">Logout</a>
             </li>
-            {% endif %}
-            {% if request.user.is_authenticated == False %}
+            {% else %}
             <li class="menu-item">
                 <a href="{% url 'login' %}">Login</a>
             </li>

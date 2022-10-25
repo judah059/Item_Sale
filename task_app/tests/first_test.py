@@ -2,7 +2,7 @@ from django.contrib.auth.models import AnonymousUser, User
 from django.test import TestCase, RequestFactory
 
 from task_app.views import ItemListView, SaleCreateView, SaleListView
-from task_app.models import Sale, Item, PriceHistory
+from task_app.models import Sale, Item, PriceHistory, MyUser
 
 
 class FirstTest(TestCase):
@@ -10,7 +10,7 @@ class FirstTest(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
-        self.user = User.objects.create_user(username='john', password='1')
+        self.user = MyUser.objects.create_user(username='john', password='1')
 
     def test_base_page(self):
         request = self.factory.get('/')
@@ -20,7 +20,7 @@ class FirstTest(TestCase):
     def test_add_sale(self):
         request = self.factory.post('buy-item/', {
             'item': 1,
-            'employee': 1,
+            'employee': 2,
             'item_count': 2,
         }, follow=True)
         response = SaleCreateView.as_view()(request)
@@ -45,6 +45,18 @@ class FirstTest(TestCase):
         item = Item.objects.get(pk=1)
         item.price = 500
         item.save()
-        price_history = PriceHistory.objects.get(pk=12)
+        price_history = PriceHistory.objects.get(pk=3)
         self.assertEqual(price_history.price, 500)
 
+    def test_sale_total_price(self):
+        item = Item.objects.get(id=1)
+        Sale.objects.create(
+            item=item,
+            employee=MyUser.objects.get(id=2),
+            item_count=2,
+        )
+        item.price = 1000
+        item.save()
+        sale = Sale.objects.get(id=2)
+        print(sale)
+        self.assertEqual(sale.total_price, 200)
