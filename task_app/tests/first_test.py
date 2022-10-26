@@ -23,8 +23,9 @@ class FirstTest(TestCase):
             'employee': 2,
             'item_count': 2,
         }, follow=True)
+        request.user = self.user
         response = SaleCreateView.as_view()(request)
-        sale_item = Sale.objects.get(id=1)
+        sale_item = Sale.objects.first()
         self.assertEqual(response.status_code, 302)
         self.assertEqual(sale_item.item_count, 2)
 
@@ -42,21 +43,20 @@ class FirstTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_price(self):
-        item = Item.objects.get(pk=1)
+        item = Item.objects.first()
         item.price = 500
         item.save()
-        price_history = PriceHistory.objects.get(pk=3)
+        price_history = PriceHistory.objects.last()
         self.assertEqual(price_history.price, 500)
 
     def test_sale_total_price(self):
-        item = Item.objects.get(id=1)
+        item = Item.objects.first()
         Sale.objects.create(
             item=item,
-            employee=MyUser.objects.get(id=2),
+            employee=MyUser.objects.filter(role='EM').first(),
             item_count=2,
         )
         item.price = 1000
         item.save()
-        sale = Sale.objects.get(id=2)
-        print(sale)
+        sale = Sale.objects.get(item=item, item_count=2)
         self.assertEqual(sale.total_price, 200)

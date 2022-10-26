@@ -9,13 +9,10 @@
             <div class="product-field-description">{{object.description}}</div>
             <form method="post" action="{% url 'buy-item' %}">
                 {% csrf_token %}
-                {{ form }}
+                {{ form.item_count }}
+                {{ form.employee }}
+                {{ form.item }}
                 <input type="hidden" name="item" value="{{ object.id }}">
-                <select name="employee">
-                    {% for employee in employees %}
-                    <option value="{{employee.id}}"> {{ employee }}</option>
-                    {% endfor %}}
-                </select>
                 <input type="submit" value="Pay">
             </form>
         </div>

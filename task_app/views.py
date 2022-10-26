@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.db import transaction
-from django.views.generic import ListView, FormView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 from task_app.models import Item, MyUser, Sale, PriceHistory
 from task_app.forms import AddSaleForm
 
@@ -11,22 +11,13 @@ class ItemListView(ListView):
     template_name = 'items.html'
 
 
-class SaleCreateView(FormView):
+class SaleCreateView(LoginRequiredMixin, CreateView):
     form_class = AddSaleForm
-    http_method_names = ['post']
     success_url = '/'
-
-    def get_form_kwargs(self):
-        kw = super(SaleCreateView, self).get_form_kwargs()
-        kw['request'] = self.request
-        return kw
+    login_url = '/login/'
 
     def form_valid(self, form):
         obj = form.save(commit=False)
-        employee_id = self.request.POST.get('employee')
-        obj.employee = MyUser.objects.get(id=employee_id)
-        item_id = self.request.POST.get('item')
-        obj.item = Item.objects.get(id=item_id)
         obj.item.count = obj.item.count - obj.item_count
         with transaction.atomic():
             obj.item.save()
@@ -41,14 +32,8 @@ class ItemDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ItemDetailView, self).get_context_data(**kwargs)
-        context['form'] = AddSaleForm
-        context['employees'] = MyUser.objects.filter(role='EM')
+        context['form'] = AddSaleForm(initial={'item': self.get_object()})
         return context
-
-    def get_form_kwargs(self):
-        kw = super(ItemDetailView, self).get_form_kwargs()
-        kw['request'] = self.request
-        return kw
 
 
 class Login(LoginView):
